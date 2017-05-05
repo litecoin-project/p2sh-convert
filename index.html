@@ -1,0 +1,47 @@
+<html>
+	<script src='bitcoinjs.min.js'></script>
+	<script type="text/javascript">
+		function convert() {
+			try {
+				address = document.getElementById('address').value;
+				decoded = bitcoin.address.fromBase58Check(address);
+				version = decoded['version']
+
+				switch (version) {
+					case 5:
+						message = "Mainnet p2sh address: ";
+						version = 50;
+						break;
+					case 50:
+						message = "Mainnet p2sh address (deprecated): ";
+						version = 5;
+						break;
+					case 196:
+						message = "Testnet p2sh address: ";
+						version = 58;
+						break;
+					case 58:
+						message = "Testnet p2sh address (deprecated): ";
+						version = 196;
+						break;
+					default:
+						throw "unknown";
+				}
+				// 5 <-> 50
+				// 196 <-> 58
+				address = bitcoin.address.toBase58Check(decoded['hash'], version);
+			} catch(err) {
+				message = "Please enter a valid address."
+			    address = "";
+			}
+
+			document.getElementById('message').innerText = message + address;
+		}
+	</script>
+
+
+	<input id="address" size="40" value="3Ps3MeHaYm2s5WPsRo1kHkCvS8EFawzG7Q"/>
+	<button type="button" onclick="convert();" >Convert</button>
+	<br/>
+	<label id="message"/>
+</html>
